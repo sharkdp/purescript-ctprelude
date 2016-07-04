@@ -30,25 +30,21 @@ data Five = FiveA | FiveB | FiveC | FiveD | FiveE
 -- Some basic functions.
 -------------------------------------------------------------------------------
 
--- | The identity function.
+-- | The identity morphism (function).
 id :: ∀ a. a → a
 id x = x
 
--- | Applies a function to an argument.
-apply :: ∀ a b. (a → b) → a → b
-apply f x = f x
-
-infixr 0 apply as $
-
--- | Function composition.
+-- | Morphism (function) composition.
 compose :: ∀ a b c. (b → c) → (a → b) → (a → c)
 compose f g x = f (g x)
 
 infixr 10 compose as ∘
 
--- | A function that ignores the second argument.
-const :: ∀ a b. a → b → a
-const x _ = x
+-- | Helper-function to defined `$`.
+apply :: ∀ a b. (a → b) → a → b
+apply f x = f x
+
+infixr 0 apply as $
 
 -------------------------------------------------------------------------------
 -- Initial and final object
