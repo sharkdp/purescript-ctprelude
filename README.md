@@ -1,5 +1,7 @@
 # purescript-ctprelude
 
+(WORK IN PROGRESS)
+
 A Prelude with names from category theory. 
 
 This module provides an alternative Prelude for PureScript.
