@@ -40,14 +40,14 @@ compose f g x = f (g x)
 
 infixr 10 compose as ∘
 
--- | Helper-function to defined `$`.
+-- | Helper-function to define `$`.
 apply :: ∀ a b. (a → b) → a → b
 apply f x = f x
 
 infixr 0 apply as $
 
 -------------------------------------------------------------------------------
--- Initial and final object
+-- Initial and final object.
 -------------------------------------------------------------------------------
 
 -- | In the category of PureScript types, `Zero` is the initial object.
@@ -207,8 +207,8 @@ instance functorList :: Functor List where
   map _ Nil = Nil
   map f (x : xs) = f x : map f xs
 
--- | The length of a list as a natural transformation from `List` to `Const
--- | Nat`.
+-- | The length of a list as a natural transformation from `List` to
+-- `Const Nat`.
 length :: List ↝ Const Nat
 length Nil = Const Zero
 length (_ : xs) =
