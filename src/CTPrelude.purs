@@ -77,10 +77,24 @@ infixl 5 type Coproduct as ⊕
 -- The functor type class.
 -------------------------------------------------------------------------------
 
+-- | The Functor typeclass.
+-- |
+-- | Laws:
+-- | - Identity: `map id = id`
+-- | - Composition: `map (f ∘ g) = map f ∘ map g`
 class Functor f where
   map :: ∀ a b. (a → b) → (f a → f b)
 
-infixl 5 map as <$>
+infixl 4 map as <$>
+
+-------------------------------------------------------------------------------
+-- Natural transformations.
+-------------------------------------------------------------------------------
+
+-- | A natural transformation between two functors.
+type NaturalTransformation f g = ∀ a. f a → g a
+
+infixr 6 type NaturalTransformation as ↝
 
 -------------------------------------------------------------------------------
 -- Type classes for isomorphisms.
@@ -142,15 +156,6 @@ instance functorConst :: Functor (Const a) where
   map _ (Const x) = Const x
 
 -------------------------------------------------------------------------------
--- Natural transformations.
--------------------------------------------------------------------------------
-
--- | A natural transformation between two functors.
-type NaturalTransformation f g = ∀ a. f a → g a
-
-infixr 6 type NaturalTransformation as ↝
-
--------------------------------------------------------------------------------
 -- Natural numbers.
 -------------------------------------------------------------------------------
 
@@ -165,15 +170,19 @@ add (Succ n) m = Succ (n `add` m)
 
 infixl 5 add as +
 
+-- | The natural number `0`.
 zero :: Nat
 zero = Zero
 
+-- | The natural number `1`.
 one :: Nat
 one = Succ Zero
 
+-- | The natural number `2`.
 two :: Nat
 two = one + one
 
+-- | The natural number `3`.
 three :: Nat
 three = two + one
 
