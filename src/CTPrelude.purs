@@ -1,4 +1,4 @@
--- | A PureScript Prelude with category theory names.
+-- | An educational Prelude for PureScript with names from category theory.
 module CTPrelude where
 
 -------------------------------------------------------------------------------
@@ -50,12 +50,24 @@ infixr 10 compose as ∘
 const :: ∀ a b. a → b → a
 const x _ = x
 
--- | A function from the empty set to anything: "Ex falso quodlibet".
-foreign import
-  fromInitial :: ∀ a. Zero → a
+-------------------------------------------------------------------------------
+-- Initial and final object
+-------------------------------------------------------------------------------
 
--- | A function from anything to the singleton set.
-toFinal :: ∀ a. a → One
+-- | In the category of PureScript types, `Zero` is the initial object.
+type Initial = Zero
+
+-- | In the category of PureScript types, `One` is the final object.
+type Final = One
+
+-- | `fromInitial` (also known as `absurd`) is the unique morphism from the
+-- | inital object to anything else. Ex falso quodlibet.
+foreign import
+  fromInitial :: ∀ a. Initial → a
+
+-- | `toFinal` (also known as `unit`) is the unique morphism from any object to
+-- | the final object.
+toFinal :: ∀ a. a → Final
 toFinal _ = One
 
 -------------------------------------------------------------------------------
