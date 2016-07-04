@@ -1,0 +1,12 @@
+{
+  "name": "purescript-ctprelude",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "output"
+  ],
+  "devDependencies": {
+    "purescript-psci-support": "^1.0.0"
+  }
+}
