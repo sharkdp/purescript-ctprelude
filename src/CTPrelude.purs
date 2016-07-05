@@ -208,7 +208,7 @@ instance functorList :: Functor List where
   map f (x : xs) = f x : map f xs
 
 -- | The length of a list as a natural transformation from `List` to `Const
--- | Nat´.
+-- | Nat`.
 length :: List ↝ Const Nat
 length Nil = Const Zero
 length (_ : xs) =
