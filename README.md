@@ -1,12 +1,16 @@
 # purescript-ctprelude
 
-(WORK IN PROGRESS)
+An educational Prelude for PureScript with names from category theory.
 
-A Prelude with names from category theory. 
+The idea of this project is to use mathematical names from category theory for
+the types and functions that are typically defined in a `Prelude`, or some of
+the basic libraries. For example, `Tuple` is called `Product` (with infix alias
+⊗) and `Either` is called `Coproduct` (with infix alias ⊕). `Unit`, a type
+with a single inhabitant, is called `One` whereas `Bool` is called `Two`.
 
-This module provides an alternative Prelude for PureScript.
-The idea is to use mathematical names from category theory for the types and functions.
-For example, `Tuple` is called `Product` (with infix alias ⊗) and `Either` is called `Coproduct` (with infix alias ⊕).
-
-This module is mainly intended for educational purposes.
-As an example, the `test/Main.purs` shows how to prove (on a type-level) that `Maybe` is isomorphic to `Const One ⊞ Identity`, where ⊞ is the coproduct of two functors and `One` is a type with a single inhabitant (`Unit`).
+This module is mainly intended for educational purposes. As an example, the
+file `test/Main.purs` shows how to prove that `a ⊕ a` is isomorphic to `Two
+⊗ a`.
+Also, there is a proof that `Maybe` is isomorphic to `Const One ⊞ Identity`,
+where ⊞ is the coproduct of two functors and `One` is a type with a single
+inhabitant (`Unit`).
