@@ -3,7 +3,7 @@
 An educational Prelude for PureScript with names from category theory.
 
 The idea of this project is to use mathematical names from category theory for
-the types and functions that are typically defined in a `Prelude`, or some of
+the types and functions that are typically defined in a Prelude or one of
 the basic libraries. For example, `Tuple` is called `Product` (with infix alias
 ⊗) and `Either` is called `Coproduct` (with infix alias ⊕). `Unit`, a type
 with a single inhabitant, is called `One` whereas `Bool` is called `Two`.
