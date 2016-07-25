@@ -1,4 +1,16 @@
 -- | An educational Prelude for PureScript with names from category theory.
+-- |
+-- | In the following, we will deal with the category of PureScript types,
+-- | called 'Purs'.
+-- |
+-- | Objects in Purs are PureScript types like `Int`, `String`, `Two`, `Nat`,
+-- | `List Two`, `Int ⊗ String`, or `Int → String` (function types).
+-- |
+-- | Morphisms in Purs are functions. The identity morphism is called `id`.
+-- | Composition of morphisms is simple function composition, defined by the
+-- | `∘` operator (which is associative).
+-- |
+-- | We will ignore any problems arising from bottom values.
 module CTPrelude where
 
 -------------------------------------------------------------------------------
@@ -67,6 +79,13 @@ toFinal :: ∀ a. a → Final
 toFinal _ = One
 
 -------------------------------------------------------------------------------
+-- Morphisms
+-------------------------------------------------------------------------------
+
+-- | A newtype for morphisms (functions).
+newtype Morphism a b = Morphism (a → b)
+
+-------------------------------------------------------------------------------
 -- Definition of the product and the coproduct.
 -------------------------------------------------------------------------------
 
@@ -85,7 +104,8 @@ infixl 5 type Coproduct as ⊕
 -- The functor type class.
 -------------------------------------------------------------------------------
 
--- | The Functor typeclass.
+-- | A typeclass for endofunctors on Purs (i.e. a functor from Purs to Purs).
+-- | The term `Functor` is used instead of `Endofunctor` for convenience.
 -- |
 -- | Laws:
 -- | - Identity: `map id = id`
