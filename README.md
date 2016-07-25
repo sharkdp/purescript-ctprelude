@@ -2,6 +2,8 @@
 
 An educational Prelude for PureScript with names from category theory.
 
+[Read the source](src/CTPrelude.purs)
+
 The idea of this project is to use mathematical names from category theory for
 the types and functions that are typically defined in a Prelude or one of
 the basic libraries. For example, `Tuple` is called `Product` (with infix alias
