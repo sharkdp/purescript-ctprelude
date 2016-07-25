@@ -13,6 +13,9 @@
 -- | We will ignore any problems arising from bottom values.
 module CTPrelude where
 
+-- import some things that are not related to category theory
+import CTPrelude.Internal (class Eq, (==))
+
 -------------------------------------------------------------------------------
 -- Types (sets) with a finite number of 0, 1, .. 5 inhabitants (elements).
 -------------------------------------------------------------------------------
@@ -101,7 +104,7 @@ data Coproduct a b = CoproductA a | CoproductB b
 infixl 5 type Coproduct as ⊕
 
 -------------------------------------------------------------------------------
--- The functor type class.
+-- (Endo)functors
 -------------------------------------------------------------------------------
 
 -- | A typeclass for endofunctors on Purs (i.e. a functor from Purs to Purs).
@@ -201,6 +204,12 @@ add n Zero = n
 add (Succ n) m = Succ (n `add` m)
 
 infixl 5 add as +
+
+instance eqNat :: Eq Nat where
+  eq Zero Zero         = true
+  eq Zero (Succ _)     = false
+  eq (Succ _) Zero     = false
+  eq (Succ n) (Succ m) = n == m
 
 -- | The natural number `0`.
 zero :: Nat
