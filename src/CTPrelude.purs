@@ -180,6 +180,10 @@ instance functorIdentity :: Functor Identity where
 -- | The Constant functor.
 data Const a b = Const a
 
+-- | Extract the value from a Constant functor.
+runConst :: ∀ a b. Const a b → a
+runConst (Const x) = x
+
 instance functorConst :: Functor (Const a) where
   map _ (Const x) = Const x
 
@@ -221,7 +225,7 @@ three = two + one
 -- | A linked list.
 data List a = Nil | Cons a (List a)
 
-infixl 5 Cons as :
+infixr 6 Cons as :
 
 instance functorList :: Functor List where
   map _ Nil = Nil
@@ -230,7 +234,5 @@ instance functorList :: Functor List where
 -- | The length of a list as a natural transformation from `List` to
 -- `Const Nat`.
 length :: List ↝ Const Nat
-length Nil = Const Zero
-length (_ : xs) =
-  case length xs of
-    Const n → Const (n + one)
+length Nil      = Const Zero
+length (_ : xs) = Const $ runConst (length xs) + one
