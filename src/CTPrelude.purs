@@ -191,6 +191,39 @@ instance functorConst :: Functor (Const a) where
   map _ (Const x) = Const x
 
 -------------------------------------------------------------------------------
+-- Bifunctors.
+-------------------------------------------------------------------------------
+
+-- | A `Bifunctor` is a `Functor` from the product category Purs × Purs to
+-- | Purs. A type constructor with two arguments is a `Bifunctor` if it is
+-- | functorial in each argument.
+-- |
+-- | Laws:
+-- | - Identity: `bimap id id == id`
+-- | - Composition: `bimap f1 g1 ∘ bimap f2 g2 == bimap (f1 ∘ f2) (g1 ∘ g2)`
+-- |
+class Bifunctor f where
+  bimap :: ∀ a b c d. (a → c) → (b → d) → f a b → f c d
+
+-- | Map a function over the left argument.
+lmap :: ∀ f a b c. Bifunctor f ⇒ (a → c) → f a b → f c b
+lmap f = bimap f id
+
+-- | Map a function over the right argument.
+rmap :: ∀ f a b d. Bifunctor f ⇒ (b → d) → f a b → f a d
+rmap g = bimap id g
+
+instance bifunctorProduct :: Bifunctor Product where
+  bimap f g (x ⊗ y) = f x ⊗ g y
+
+instance bifunctorSum :: Bifunctor Coproduct where
+  bimap f _ (CoproductA x) = CoproductA (f x)
+  bimap _ g (CoproductB y) = CoproductB (g y)
+
+instance bifunctorConst :: Bifunctor Const where
+  bimap f _ (Const x) = Const (f x)
+
+-------------------------------------------------------------------------------
 -- Natural numbers.
 -------------------------------------------------------------------------------
 
