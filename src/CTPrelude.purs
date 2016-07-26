@@ -225,6 +225,17 @@ instance bifunctorConst :: Bifunctor Const where
   bimap f _ (Const x) = Const (f x)
 
 -------------------------------------------------------------------------------
+-- Composition of Functors.
+-------------------------------------------------------------------------------
+
+newtype Compose f g a = Compose (f (g a))
+
+infixl 3 type Compose as ⊚
+
+instance functorCompose :: (Functor f, Functor g) ⇒ Functor (Compose f g) where
+  map h (Compose fga) = Compose (map (map h) fga)
+
+-------------------------------------------------------------------------------
 -- Natural numbers.
 -------------------------------------------------------------------------------
 
