@@ -95,13 +95,13 @@ newtype Morphism a b = Morphism (a → b)
 -- | The product of two types, also known as `Tuple`.
 data Product a b = Product a b
 
-infixl 6 type Product as ⊗
-infixl 6 Product as ⊗
+infixr 6 type Product as ⊗
+infixr 6 Product as ⊗
 
 -- | The coproduct (sum) of two types, also known as `Either`.
 data Coproduct a b = CoproductA a | CoproductB b
 
-infixl 5 type Coproduct as ⊕
+infixr 5 type Coproduct as ⊕
 
 -------------------------------------------------------------------------------
 -- (Endo)functors

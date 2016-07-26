@@ -141,6 +141,21 @@ instance i6 :: Isomorphism2 List (Const One ⊞ (Identity ⊠ List)) where
   bwd2 (CoproductFB (Identity x ⊠ xs)) = x : xs
 
 -------------------------------------------------------------------------------
+-- Prove that `These a b` is isomorphic to `a ⊕ b ⊕ (a ⊗ b)`
+-------------------------------------------------------------------------------
+
+data These a b = This a | That b | Both a b
+
+instance i7 :: Isomorphism1 (These a b) (a ⊕ b ⊕ (a ⊗ b)) where
+  fwd1 (This x)   = CoproductA x
+  fwd1 (That y)   = CoproductB (CoproductA y)
+  fwd1 (Both x y) = CoproductB (CoproductB (x ⊗ y))
+
+  bwd1 (CoproductA x)                    = This x
+  bwd1 (CoproductB (CoproductA y))       = That y
+  bwd1 (CoproductB (CoproductB (x ⊗ y))) = Both x y
+
+-------------------------------------------------------------------------------
 -- Dummy main function
 -------------------------------------------------------------------------------
 
