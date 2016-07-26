@@ -134,20 +134,20 @@ infixr 6 type NaturalTransformation as ↝
 -- | A type class for isomorphisms between two types of kind `*`.
 -- |
 -- | Laws:
--- |    * `fwd0 ∘ bwd0 = id`
--- |    * `bwd0 ∘ fwd0 = id`
-class Isomorphism0 a b where
-  fwd0 :: a → b
-  bwd0 :: b → a
+-- |    * `fwd1 ∘ bwd1 = id`
+-- |    * `bwd1 ∘ fwd1 = id`
+class Isomorphism1 a b where
+  fwd1 :: a → b
+  bwd1 :: b → a
 
 -- | A type class for isomorphisms between two types of kind `* → *`.
 -- |
 -- | Laws:
--- |    * `fwd1 ∘ bwd1 = id`
--- |    * `bwd1 ∘ fwd1 = id`
-class Isomorphism1 f g where
-  fwd1 :: f ↝ g
-  bwd1 :: g ↝ f
+-- |    * `fwd2 ∘ bwd2 = id`
+-- |    * `bwd2 ∘ fwd2 = id`
+class Isomorphism2 f g where
+  fwd2 :: f ↝ g
+  bwd2 :: g ↝ f
 
 -------------------------------------------------------------------------------
 -- Products and coproducts of functors.

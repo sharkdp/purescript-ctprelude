@@ -38,5 +38,5 @@ foreign import
 
 -- | A function which can be used for debugging output. Print a value to the
 -- | console and return `true`.
-unsafePrint :: ∀ a. a -> Boolean
+unsafePrint :: ∀ a. a → Boolean
 unsafePrint x = unsafeTrace x true
