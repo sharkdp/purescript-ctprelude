@@ -26,11 +26,33 @@ instance i1 :: Isomorphism1 (a ⊕ a) (TwoTimes a) where
 data Maybe a = Nothing | Just a
 
 instance i2 :: Isomorphism2 Maybe (Const One ⊞ Identity) where
-  fwd2 Nothing = CoproductF $ CoproductA (Const One)
-  fwd2 (Just x) = CoproductF $ CoproductB (Identity x)
+  fwd2 Nothing  = CoproductFA (Const One)
+  fwd2 (Just x) = CoproductFB (Identity x)
 
-  bwd2 (CoproductF (CoproductA (Const One))) = Nothing
-  bwd2 (CoproductF (CoproductB (Identity x))) = Just x
+  bwd2 (CoproductFA (Const One)) = Nothing
+  bwd2 (CoproductFB (Identity x)) = Just x
+
+-- Prove that `NonEmpty f` is isomorphic to `Identity ⊠ f`
+data NonEmpty f a = NonEmpty a (f a)
+
+infixr 5 NonEmpty as :|
+
+instance functorNonEmpty :: Functor f ⇒ Functor (NonEmpty f) where
+  map f (x :| xs) = f x :| map f xs
+
+instance i3 :: Functor f ⇒ Isomorphism2 (NonEmpty f) (Identity ⊠ f) where
+  fwd2 (x :| xs) = Identity x ⊠ xs
+  bwd2 (Identity x ⊠ xs) = x :| xs
+
+-- Prove that `Ann a f` is isomorphic to `Const a ⊠ f`
+data Ann a f b = Ann a (f b)
+
+instance functorAnn :: Functor f ⇒ Functor (Ann a f) where
+  map f (Ann a fb) = Ann a (map f fb)
+
+instance i4 :: Functor f ⇒ Isomorphism2 (Ann a f) (Const a ⊠ f) where
+  fwd2 (Ann a fb) = Const a ⊠ fb
+  bwd2 (Const a ⊠ fb) = (Ann a fb)
 
 -- Dummy main function
 main :: ∀ a. a → a

@@ -154,21 +154,22 @@ class Isomorphism2 f g where
 -------------------------------------------------------------------------------
 
 -- | The product of two functors.
-newtype ProductF f g a = ProductF (f a ⊗ g a)
+data ProductF f g a = ProductF (f a) (g a)
 
 infixl 4 type ProductF as ⊠
+infixl 4 ProductF as ⊠
 
 instance functorProductF :: (Functor f, Functor g) ⇒ Functor (ProductF f g) where
-  map f (ProductF (fa ⊗ ga)) = ProductF $ (f <$> fa) ⊗ (f <$> ga)
+  map f (fa ⊠ ga) = (f <$> fa) ⊠ (f <$> ga)
 
 -- | The coproduct of two functors.
-newtype CoproductF f g a = CoproductF (f a ⊕ g a)
+data CoproductF f g a = CoproductFA (f a) | CoproductFB (g a)
 
 infixl 3 type CoproductF as ⊞
 
 instance functorFCoproduct :: (Functor f, Functor g) ⇒ Functor (CoproductF f g) where
-  map f (CoproductF (CoproductA fa)) = CoproductF $ CoproductA (f <$> fa)
-  map f (CoproductF (CoproductB fb)) = CoproductF $ CoproductB (f <$> fb)
+  map f (CoproductFA fa) = CoproductFA (f <$> fa)
+  map f (CoproductFB fb) = CoproductFB (f <$> fb)
 
 -------------------------------------------------------------------------------
 -- Identity and Const functor.
