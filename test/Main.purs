@@ -54,6 +54,16 @@ instance i4 :: Functor f ⇒ Isomorphism2 (Ann a f) (Const a ⊠ f) where
   fwd2 (Ann a fb) = Const a ⊠ fb
   bwd2 (Const a ⊠ fb) = (Ann a fb)
 
+-- Prove that `Const One ⊞ f` is isomorphic to `Maybe ⊚ f`
+data AddOne f a = AddOne ((Const One ⊞ f) a)
+
+instance i5 :: Functor f ⇒ Isomorphism2 (AddOne f) (Maybe ⊚ f) where
+  fwd2 (AddOne (CoproductFA (Const One))) = Compose Nothing
+  fwd2 (AddOne (CoproductFB f))           = Compose (Just f)
+
+  bwd2 (Compose Nothing)  = AddOne $ CoproductFA (Const One)
+  bwd2 (Compose (Just f)) = AddOne $ CoproductFB f
+
 -- Dummy main function
 main :: ∀ a. a → a
 main = id
