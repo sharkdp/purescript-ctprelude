@@ -158,8 +158,8 @@ infixr 6 type NaturalTransformation as ↝
 -- | A type class for isomorphisms between two types of kind `*`.
 -- |
 -- | Laws:
--- |    * `fwd1 ∘ bwd1 = id`
--- |    * `bwd1 ∘ fwd1 = id`
+-- | - `fwd1 ∘ bwd1 = id`
+-- | - `bwd1 ∘ fwd1 = id`
 class Isomorphism1 a b where
   fwd1 :: a → b
   bwd1 :: b → a
@@ -167,8 +167,8 @@ class Isomorphism1 a b where
 -- | A type class for isomorphisms between two types of kind `* → *`.
 -- |
 -- | Laws:
--- |    * `fwd2 ∘ bwd2 = id`
--- |    * `bwd2 ∘ fwd2 = id`
+-- | - `fwd2 ∘ bwd2 = id`
+-- | - `bwd2 ∘ fwd2 = id`
 class Isomorphism2 f g where
   fwd2 :: f ↝ g
   bwd2 :: g ↝ f
@@ -295,7 +295,7 @@ instance profunctorCostar :: Functor f ⇒ Profunctor (Costar f) where
 
 -- | The `Strong` class extends `Profunctor` with combinators for working with
 -- | products.
-class Profunctor p <= Strong p where
+class Profunctor p ⇐ Strong p where
   first  :: ∀ a b c. p a b → p (a ⊗ c) (b ⊗ c)
   second :: ∀ a b c. p b c → p (a ⊗ b) (a ⊗ c)
 
@@ -305,7 +305,7 @@ instance strongFunction :: Strong (→) where
 
 -- | The `Choice` class extends `Profunctor` with combinators for working with
 -- | coproducts.
-class Profunctor p <= Choice p where
+class Profunctor p ⇐ Choice p where
   left  :: ∀ a b c. p a b → p (a ⊕ c) (b ⊕ c)
   right :: ∀ a b c. p b c → p (a ⊕ b) (a ⊕ c)
 
@@ -314,3 +314,11 @@ instance choiceFunction :: Choice (→) where
   left  fn (CoproductB x) = CoproductB x
   right fn (CoproductA x) = CoproductA x
   right fn (CoproductB x) = CoproductB (fn x)
+
+-- | The `Closed` class extends `Profunctor` with a combinator to work with
+-- | functions.
+class Profunctor p ⇐ Closed p where
+  closed :: ∀ a b x. p a b → p (x → a) (x → b)
+
+instance closedFunction :: Closed Function where
+  closed = (∘)
