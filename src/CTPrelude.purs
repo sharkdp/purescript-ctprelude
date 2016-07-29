@@ -202,6 +202,9 @@ instance functorFCoproduct :: (Functor f, Functor g) ⇒ Functor (CoproductF f g
 -- | The Identity functor.
 data Identity a = Identity a
 
+runIdentity :: ∀ a. Identity a → a
+runIdentity (Identity x) = x
+
 instance functorIdentity :: Functor Identity where
   map f (Identity x) = Identity (f x)
 
@@ -289,3 +292,25 @@ runCostar (Costar fn) = fn
 
 instance profunctorCostar :: Functor f ⇒ Profunctor (Costar f) where
   dimap f g (Costar fn) = Costar $ g ∘ fn ∘ map f
+
+-- | The `Strong` class extends `Profunctor` with combinators for working with
+-- | products.
+class Profunctor p <= Strong p where
+  first  :: ∀ a b c. p a b → p (a ⊗ c) (b ⊗ c)
+  second :: ∀ a b c. p b c → p (a ⊗ b) (a ⊗ c)
+
+instance strongFunction :: Strong (→) where
+  first  fn (a ⊗ c) = fn a ⊗ c
+  second fn (a ⊗ c) = a ⊗ fn c
+
+-- | The `Choice` class extends `Profunctor` with combinators for working with
+-- | coproducts.
+class Profunctor p <= Choice p where
+  left  :: ∀ a b c. p a b → p (a ⊕ c) (b ⊕ c)
+  right :: ∀ a b c. p b c → p (a ⊕ b) (a ⊕ c)
+
+instance choiceFunction :: Choice (→) where
+  left  fn (CoproductA x) = CoproductA (fn x)
+  left  fn (CoproductB x) = CoproductB x
+  right fn (CoproductA x) = CoproductA x
+  right fn (CoproductB x) = CoproductB (fn x)
