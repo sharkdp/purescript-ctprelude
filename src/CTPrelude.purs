@@ -79,13 +79,6 @@ toFinal :: ∀ a. a → Final
 toFinal _ = One
 
 -------------------------------------------------------------------------------
--- Morphisms
--------------------------------------------------------------------------------
-
--- | A newtype for morphisms (functions).
-newtype Morphism a b = Morphism (a → b)
-
--------------------------------------------------------------------------------
 -- Definition of the product and the coproduct.
 -------------------------------------------------------------------------------
 
@@ -101,11 +94,12 @@ data Coproduct a b = CoproductA a | CoproductB b
 infixr 5 type Coproduct as ⊕
 
 -------------------------------------------------------------------------------
--- (Endo)functors
+-- Covariant functors.
 -------------------------------------------------------------------------------
 
--- | A typeclass for endofunctors on Purs (i.e. a functor from Purs to Purs).
--- | The term `Functor` is used instead of `Endofunctor` for convenience.
+-- | A typeclass for covariant endofunctors on Purs (i.e. functors from
+-- | Purs to Purs). The term `Functor` is used instead of `Endofunctor` for
+-- | convenience.
 -- |
 -- | Laws:
 -- | - Identity: `map id = id`
@@ -114,6 +108,39 @@ class Functor f where
   map :: ∀ a b. (a → b) → (f a → f b)
 
 infixl 4 map as <$>
+
+-------------------------------------------------------------------------------
+-- Contravariant functors.
+-------------------------------------------------------------------------------
+
+-- | A typeclass for contravariant endofunctors on Purs.
+-- |
+-- | Laws:
+-- | - Identity: `cmap id = id`
+-- | - Composition: `cmap (f ∘ g) = cmap g ∘ cmap f`
+class Contravariant f where
+  cmap :: ∀ a b. (a → b) → (f b → f a)
+
+infixl 4 cmap as >$<
+
+-------------------------------------------------------------------------------
+-- Morphisms
+-------------------------------------------------------------------------------
+
+-- | A newtype for morphisms on Purs (functions).
+newtype Morphism a b = Morphism (a → b)
+
+instance functorFunction :: Functor ((→) a) where
+  map = (∘)
+
+instance functorMorphism :: Functor (Morphism a) where
+  map g (Morphism f) = Morphism (g ∘ f)
+
+-- | A newtype for morphisms with the type arguments reversed
+newtype Reversed b a = Reversed (a → b)
+
+instance contravariantReversed :: Contravariant (Reversed b) where
+  cmap g (Reversed f) = Reversed (f ∘ g)
 
 -------------------------------------------------------------------------------
 -- Natural transformations.
@@ -188,6 +215,9 @@ runConst (Const x) = x
 instance functorConst :: Functor (Const a) where
   map _ (Const x) = Const x
 
+instance contravariantConst :: Contravariant (Const a) where
+  cmap _ (Const x) = Const x
+
 -------------------------------------------------------------------------------
 -- Bifunctors.
 -------------------------------------------------------------------------------
@@ -199,17 +229,8 @@ instance functorConst :: Functor (Const a) where
 -- | Laws:
 -- | - Identity: `bimap id id == id`
 -- | - Composition: `bimap f1 g1 ∘ bimap f2 g2 == bimap (f1 ∘ f2) (g1 ∘ g2)`
--- |
 class Bifunctor f where
   bimap :: ∀ a b c d. (a → c) → (b → d) → f a b → f c d
-
--- | Map a function over the left argument.
-biLmap :: ∀ f a b c. Bifunctor f ⇒ (a → c) → f a b → f c b
-biLmap f = bimap f id
-
--- | Map a function over the right argument.
-biRmap :: ∀ f a b d. Bifunctor f ⇒ (b → d) → f a b → f a d
-biRmap g = bimap id g
 
 instance bifunctorProduct :: Bifunctor Product where
   bimap f g (x ⊗ y) = f x ⊗ g y
@@ -236,16 +257,17 @@ instance functorCompose :: (Functor f, Functor g) ⇒ Functor (Compose f g) wher
 -- Profunctors.
 -------------------------------------------------------------------------------
 
+-- | A `Profunctor` is a `Functor` from the pair category `(Type^op, Type)`
+-- | to `Type`.
+-- |
+-- | In other words, a `Profunctor` is a type constructor which is
+-- | contravariant in its first argument and covariant in its second argument.
+-- |
+-- | Laws:
+-- | - Identity: `dimap id id = id`
+-- | - Composition: `dimap f1 g1 ∘ dimap f2 g2 = dimap (f1 ∘ f2) (g1 ∘ g2)`
 class Profunctor p where
   dimap :: ∀ a b c d. (c → a) → (b → d) → p a b → p c d
 
 instance profunctorFunction :: Profunctor (→) where
   dimap f h g = h ∘ g ∘ f
-
--- | Map a function over the left argument.
-proLmap :: ∀ p a b c. Profunctor p ⇒ (c → a) → p a b → p c b
-proLmap f = dimap f id
-
--- | Map a function over the right argument.
-proRmap :: ∀ p a b d. Profunctor p ⇒ (b → d) → p a b → p a d
-proRmap g = dimap id g
