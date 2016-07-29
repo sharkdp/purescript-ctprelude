@@ -13,9 +13,6 @@
 -- | We will ignore any problems arising from bottom values.
 module CTPrelude where
 
--- import some things that are not related to category theory
-import CTPrelude.Internal (class Eq, (==))
-
 -------------------------------------------------------------------------------
 -- Types (sets) with a finite number of 0, 1, .. 5 inhabitants (elements).
 -------------------------------------------------------------------------------
@@ -207,12 +204,12 @@ class Bifunctor f where
   bimap :: ∀ a b c d. (a → c) → (b → d) → f a b → f c d
 
 -- | Map a function over the left argument.
-lmap :: ∀ f a b c. Bifunctor f ⇒ (a → c) → f a b → f c b
-lmap f = bimap f id
+biLmap :: ∀ f a b c. Bifunctor f ⇒ (a → c) → f a b → f c b
+biLmap f = bimap f id
 
 -- | Map a function over the right argument.
-rmap :: ∀ f a b d. Bifunctor f ⇒ (b → d) → f a b → f a d
-rmap g = bimap id g
+biRmap :: ∀ f a b d. Bifunctor f ⇒ (b → d) → f a b → f a d
+biRmap g = bimap id g
 
 instance bifunctorProduct :: Bifunctor Product where
   bimap f g (x ⊗ y) = f x ⊗ g y
@@ -235,3 +232,20 @@ infixl 3 type Compose as ⊚
 instance functorCompose :: (Functor f, Functor g) ⇒ Functor (Compose f g) where
   map h (Compose fga) = Compose (map (map h) fga)
 
+-------------------------------------------------------------------------------
+-- Profunctors.
+-------------------------------------------------------------------------------
+
+class Profunctor p where
+  dimap :: ∀ a b c d. (c → a) → (b → d) → p a b → p c d
+
+instance profunctorFunction :: Profunctor (→) where
+  dimap f h g = h ∘ g ∘ f
+
+-- | Map a function over the left argument.
+proLmap :: ∀ p a b c. Profunctor p ⇒ (c → a) → p a b → p c b
+proLmap f = dimap f id
+
+-- | Map a function over the right argument.
+proRmap :: ∀ p a b d. Profunctor p ⇒ (b → d) → p a b → p a d
+proRmap g = dimap id g
