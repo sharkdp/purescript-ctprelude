@@ -265,9 +265,27 @@ instance functorCompose :: (Functor f, Functor g) ⇒ Functor (Compose f g) wher
 -- |
 -- | Laws:
 -- | - Identity: `dimap id id = id`
--- | - Composition: `dimap f1 g1 ∘ dimap f2 g2 = dimap (f1 ∘ f2) (g1 ∘ g2)`
+-- | - Composition: `dimap f1 g1 ∘ dimap f2 g2 = dimap (f2 ∘ f1) (g1 ∘ g2)`
 class Profunctor p where
   dimap :: ∀ a b c d. (c → a) → (b → d) → p a b → p c d
 
 instance profunctorFunction :: Profunctor (→) where
   dimap f h g = h ∘ g ∘ f
+
+-- | `Star` lifts functors to profunctors (forwards).
+newtype Star f a b = Star (a → f b)
+
+runStar :: ∀ f a b. Star f a b → (a → f b)
+runStar (Star fn) = fn
+
+instance profunctorStar :: Functor f ⇒ Profunctor (Star f) where
+  dimap f g (Star fn) = Star $ map g ∘ fn ∘ f
+
+-- | `Costar` lifts functors to profunctors (backwards).
+newtype Costar f a b = Costar (f a → b)
+
+runCostar :: ∀ f a b. Costar f a b → (f a → b)
+runCostar (Costar fn) = fn
+
+instance profunctorCostar :: Functor f ⇒ Profunctor (Costar f) where
+  dimap f g (Costar fn) = Costar $ g ∘ fn ∘ map f
