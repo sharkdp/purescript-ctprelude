@@ -1,45 +1,45 @@
--- | An educational Prelude for PureScript with names from category theory.
+-- | CTPrelude is an educational Prelude for PureScript with names from
+-- | category theory.
 -- |
 -- | In the following, we will deal with the category of PureScript types,
--- | called 'Purs'.
+-- | called **Purs**. Objects in **Purs** are PureScript types like `Int`,
+-- | `String`, `Two`, `Nat`, `List Two`, `Int ⊗ String`, or `Int → String`
+-- | (function types).
 -- |
--- | Objects in Purs are PureScript types like `Int`, `String`, `Two`, `Nat`,
--- | `List Two`, `Int ⊗ String`, or `Int → String` (function types).
--- |
--- | Morphisms in Purs are functions. The identity morphism is called `id`.
+-- | Morphisms in **Purs** are functions. The identity morphism is called `id`.
 -- | Composition of morphisms is simple function composition, defined by the
 -- | `∘` operator (which is associative).
 -- |
--- | We will ignore any problems arising from bottom values.
+-- | Note: In the following, we ignore any problems arising from bottom values.
 module CTPrelude where
 
 -------------------------------------------------------------------------------
 -- Types (sets) with a finite number of 0, 1, .. 5 inhabitants (elements).
 -------------------------------------------------------------------------------
 
--- | A type with no inhabitant (the empty set). Typically known as `Void`.
+-- | A type with no inhabitant (the empty set). `Zero` is the *initial element*
+-- | in **Purs**. This type is also known as (isomorphic to) `Void`.
 data Zero
 
--- | A type with a single inhabitant (a singleton set). Typically known as
--- | `Unit`.
+-- | A type with a single inhabitant (a singleton set). `One` is the *final
+-- | object* in **Purs**. This type is also known as (isomorphic to) `Unit`.
 data One = One
 
 -- | A type with two inhabitants (a set with two elements). Typically known as
--- | `Bool`. Isomorphic to `One ⊕ One`.
+-- | `Bool`. `Two` is isomorphic to `One ⊕ One`, i.e. `Two ≅ One ⊕ One`.
 data Two = TwoA | TwoB
 
--- | A type with three inhabitants. Isomorphic to `One ⊕ Two`.
+-- | A type with three inhabitants. We have `Three ≅ One ⊕ Two ≅ Two ⊕ One`.
 data Three = ThreeA | ThreeB | ThreeC
 
--- | A type with four inhabitants. Isomorphic to `Three ⊕ One`,
--- | `Two ⊗ Two`, etc.
+-- | A type with four inhabitants. We have `Four ≅ Three ⊕ One`.
 data Four = FourA | FourB | FourC | FourD
 
 -- | A type with five inhabitants.
 data Five = FiveA | FiveB | FiveC | FiveD | FiveE
 
 -------------------------------------------------------------------------------
--- Some basic functions.
+-- Identity morphism and composition
 -------------------------------------------------------------------------------
 
 -- | The identity morphism (function).
@@ -59,47 +59,51 @@ apply f x = f x
 infixr 0 apply as $
 
 -------------------------------------------------------------------------------
--- Initial and final object.
+-- Initial and final object
 -------------------------------------------------------------------------------
 
--- | In the category of PureScript types, `Zero` is the initial object.
+-- | In the category of PureScript types, `Zero` is the *initial object*.
 type Initial = Zero
 
--- | In the category of PureScript types, `One` is the final object.
+-- | In the category of PureScript types, `One` is the *final object*.
 type Final = One
 
 -- | `fromInitial` (also known as `absurd`) is the unique morphism from the
--- | inital object to anything else. Ex falso quodlibet.
+-- | *inital object* to any other object (type). In logic (using Curry-Howard
+-- | correspondence), this corresponds to "from falsehood, anything" or "ex
+-- | falso quodlibet".
 foreign import
   fromInitial :: ∀ a. Initial → a
 
--- | `toFinal` (also known as `unit`) is the unique morphism from any object to
--- | the final object.
+-- | `toFinal` (also known as `unit`) is the unique morphism from any object
+-- | (type) to the final object.
 toFinal :: ∀ a. a → Final
 toFinal _ = One
 
 -------------------------------------------------------------------------------
--- Definition of the product and the coproduct.
+-- Product and coproduct
 -------------------------------------------------------------------------------
 
--- | The product of two types, also known as `Tuple`.
+-- | The product of two types, typically known as `Tuple`. This corresponds to
+-- | the categorical product of two objects.
 data Product a b = Product a b
 
 infixr 6 type Product as ⊗
 infixr 6 Product as ⊗
 
--- | The coproduct (sum) of two types, also known as `Either`.
+-- | The coproduct (sum) of two types, typically known as `Either`. This
+-- | corresponds to the category coproduct of two objects.
 data Coproduct a b = CoproductA a | CoproductB b
 
 infixr 5 type Coproduct as ⊕
 
 -------------------------------------------------------------------------------
--- Covariant functors.
+-- Covariant functors
 -------------------------------------------------------------------------------
 
--- | A typeclass for covariant endofunctors on Purs (i.e. functors from
--- | Purs to Purs). The term `Functor` is used instead of `Endofunctor` for
--- | convenience.
+-- | A typeclass for covariant endofunctors on **Purs** (i.e. functors from
+-- | **Purs** to **Purs**). The term `Functor` is used instead of `Endofunctor`
+-- | for convenience.
 -- |
 -- | Laws:
 -- | - Identity: `map id = id`
@@ -110,10 +114,10 @@ class Functor f where
 infixl 4 map as <$>
 
 -------------------------------------------------------------------------------
--- Contravariant functors.
+-- Contravariant functors
 -------------------------------------------------------------------------------
 
--- | A typeclass for contravariant endofunctors on Purs.
+-- | A typeclass for contravariant endofunctors on **Purs**.
 -- |
 -- | Laws:
 -- | - Identity: `cmap id = id`
@@ -127,7 +131,7 @@ infixl 4 cmap as >$<
 -- Morphisms
 -------------------------------------------------------------------------------
 
--- | A newtype for morphisms on Purs (functions).
+-- | A newtype for morphisms on **Purs** (functions).
 newtype Morphism a b = Morphism (a → b)
 
 instance functorFunction :: Functor ((→) a) where
@@ -143,7 +147,7 @@ instance contravariantReversed :: Contravariant (Reversed b) where
   cmap g (Reversed f) = Reversed (f ∘ g)
 
 -------------------------------------------------------------------------------
--- Natural transformations.
+-- Natural transformations
 -------------------------------------------------------------------------------
 
 -- | A natural transformation between two functors.
@@ -152,7 +156,7 @@ type NaturalTransformation f g = ∀ a. f a → g a
 infixr 6 type NaturalTransformation as ↝
 
 -------------------------------------------------------------------------------
--- Type classes for isomorphisms.
+-- Isomorphisms
 -------------------------------------------------------------------------------
 
 -- | A type class for isomorphisms between two types of kind `*`.
@@ -174,7 +178,7 @@ class Isomorphism2 f g where
   bwd2 :: g ↝ f
 
 -------------------------------------------------------------------------------
--- Products and coproducts of functors.
+-- Products and coproducts of functors
 -------------------------------------------------------------------------------
 
 -- | The product of two functors.
@@ -196,38 +200,23 @@ instance functorFCoproduct :: (Functor f, Functor g) ⇒ Functor (CoproductF f g
   map f (CoproductFB fb) = CoproductFB (f <$> fb)
 
 -------------------------------------------------------------------------------
--- Identity and Const functor.
+-- Composition of functors
 -------------------------------------------------------------------------------
 
--- | The Identity functor.
-data Identity a = Identity a
+newtype Compose f g a = Compose (f (g a))
 
-runIdentity :: ∀ a. Identity a → a
-runIdentity (Identity x) = x
+infixl 3 type Compose as ⊚
 
-instance functorIdentity :: Functor Identity where
-  map f (Identity x) = Identity (f x)
-
--- | The Constant functor.
-data Const a b = Const a
-
--- | Extract the value from a Constant functor.
-runConst :: ∀ a b. Const a b → a
-runConst (Const x) = x
-
-instance functorConst :: Functor (Const a) where
-  map _ (Const x) = Const x
-
-instance contravariantConst :: Contravariant (Const a) where
-  cmap _ (Const x) = Const x
+instance functorCompose :: (Functor f, Functor g) ⇒ Functor (Compose f g) where
+  map h (Compose fga) = Compose (map (map h) fga)
 
 -------------------------------------------------------------------------------
--- Bifunctors.
+-- Bifunctors
 -------------------------------------------------------------------------------
 
--- | A `Bifunctor` is a `Functor` from the product category Purs × Purs to
--- | Purs. A type constructor with two arguments is a `Bifunctor` if it is
--- | functorial in each argument.
+-- | A `Bifunctor` is a `Functor` from the product category
+-- | **Purs** × **Purs** to **Purs**. A type constructor with two arguments is
+-- | a `Bifunctor` if it is covariant in each argument.
 -- |
 -- | Laws:
 -- | - Identity: `bimap id id == id`
@@ -241,20 +230,6 @@ instance bifunctorProduct :: Bifunctor Product where
 instance bifunctorSum :: Bifunctor Coproduct where
   bimap f _ (CoproductA x) = CoproductA (f x)
   bimap _ g (CoproductB y) = CoproductB (g y)
-
-instance bifunctorConst :: Bifunctor Const where
-  bimap f _ (Const x) = Const (f x)
-
--------------------------------------------------------------------------------
--- Composition of Functors.
--------------------------------------------------------------------------------
-
-newtype Compose f g a = Compose (f (g a))
-
-infixl 3 type Compose as ⊚
-
-instance functorCompose :: (Functor f, Functor g) ⇒ Functor (Compose f g) where
-  map h (Compose fga) = Compose (map (map h) fga)
 
 -------------------------------------------------------------------------------
 -- Profunctors.
@@ -322,3 +297,33 @@ class Profunctor p ⇐ Closed p where
 
 instance closedFunction :: Closed Function where
   closed = (∘)
+
+-------------------------------------------------------------------------------
+-- Identity and Const
+-------------------------------------------------------------------------------
+
+-- | The Identity functor.
+data Identity a = Identity a
+
+-- | Extract the value from the `Identity` functor.
+runIdentity :: ∀ a. Identity a → a
+runIdentity (Identity x) = x
+
+instance functorIdentity :: Functor Identity where
+  map f (Identity x) = Identity (f x)
+
+-- | The Constant functor.
+data Const a b = Const a
+
+-- | Extract the value from a `Const` functor.
+runConst :: ∀ a b. Const a b → a
+runConst (Const x) = x
+
+instance functorConst :: Functor (Const a) where
+  map _ (Const x) = Const x
+
+instance contravariantConst :: Contravariant (Const a) where
+  cmap _ (Const x) = Const x
+
+instance bifunctorConst :: Bifunctor Const where
+  bimap f _ (Const x) = Const (f x)
