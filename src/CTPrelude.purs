@@ -159,23 +159,47 @@ infixr 6 type NaturalTransformation as ↝
 -- Isomorphisms
 -------------------------------------------------------------------------------
 
--- | A type class for isomorphisms between two types of kind `*`.
--- |
--- | Laws:
--- | - `fwd1 ∘ bwd1 = id`
--- | - `bwd1 ∘ fwd1 = id`
-class Isomorphism1 a b where
-  fwd1 :: a → b
-  bwd1 :: b → a
+-- | An isomorphism between two types `a` and `b` is given if there exist two
+-- | functions, `forwards :: a → b` and `backwards :: b → a`, satisfying the
+-- | following laws:
+-- | - `forwards ∘ backwards = id`
+-- | - `backwards ∘ forwards = id`
+data Iso a b = Iso (a → b) (b → a)
 
--- | A type class for isomorphisms between two types of kind `* → *`.
--- |
--- | Laws:
--- | - `fwd2 ∘ bwd2 = id`
--- | - `bwd2 ∘ fwd2 = id`
-class Isomorphism2 f g where
-  fwd2 :: f ↝ g
-  bwd2 :: g ↝ f
+infix 1 type Iso as ≅
+
+-- Get a function from `a → b` from the isomorphism `a ≅ b`.
+forwards :: ∀ a b. a ≅ b → a → b
+forwards (Iso fwd _) = fwd
+
+-- Get a function from `b → a` from the isomorphism `a ≅ b`.
+backwards :: ∀ a b. a ≅ b → b → a
+backwards (Iso _ bwd) = bwd
+
+-- Reverse an isomorphism.
+reverse :: ∀ a b. a ≅ b → b ≅ a
+reverse (Iso fwd bwd) = Iso bwd fwd
+
+-- | An isomorphism between two types `f` and `g` of kind `* → *` is given by
+-- | two natural transformations, `forwards2 :: f ↝ g` and
+-- | `backwards2 :: g ↝ f`, satisfying the following laws:
+-- | - `forwards2 ∘ backwards2 = id`
+-- | - `backwards2 ∘ forwards2 = id`
+data Iso2 f g = Iso2 (f ↝ g) (g ↝ f)
+
+infix 1 type Iso2 as ≊
+
+-- Get a natural transformation from `f ↝ g` from the isomorphism `f ≊ g`.
+forwards2 :: ∀ f g. f ≊ g → f ↝ g
+forwards2 (Iso2 fwd _) = fwd
+
+-- Get a function from `b → a` from the isomorphism `a ≅ b`.
+backwards2 :: ∀ f g. f ≊ g → g ↝ f
+backwards2 (Iso2 _ bwd) = bwd
+
+-- Reverse an isomorphism.
+reverse2 :: ∀ f g. f ≊ g → g ≊ f
+reverse2 (Iso2 fwd bwd) = Iso2 bwd fwd
 
 -------------------------------------------------------------------------------
 -- Products and coproducts of functors

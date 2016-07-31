@@ -2,28 +2,32 @@ module Test.Main where
 
 import CTPrelude
 
+-------------------------------------------------------------------------------
 -- Prove that `Bool` is isomorphic to `One ⊕ One`.
+-------------------------------------------------------------------------------
 data Bool = True | False
 
-instance i0 :: Isomorphism1 Bool (One ⊕ One) where
-  fwd1 True  = CoproductA One
-  fwd1 False = CoproductB One
+i0 :: Bool ≅ One ⊕ One
+i0 = Iso fwd bwd
+  where
+    fwd True  = CoproductA One
+    fwd False = CoproductB One
 
-  bwd1 (CoproductA One) = True
-  bwd1 (CoproductB One) = False
+    bwd (CoproductA One) = True
+    bwd (CoproductB One) = False
 
 -------------------------------------------------------------------------------
 -- Prove that `a ⊕ a` is isomorphic to `Two ⊗ a`.
 -------------------------------------------------------------------------------
 
-newtype TwoTimes a = TwoTimes (Two ⊗ a)
+i1 :: ∀ a. a ⊕ a ≅ Two ⊗ a
+i1 = Iso fwd bwd
+  where
+    fwd (CoproductA x) = TwoA ⊗ x
+    fwd (CoproductB y) = TwoB ⊗ y
 
-instance i1 :: Isomorphism1 (a ⊕ a) (TwoTimes a) where
-  fwd1 (CoproductA x) = TwoTimes $ TwoA ⊗ x
-  fwd1 (CoproductB y) = TwoTimes $ TwoB ⊗ y
-
-  bwd1 (TwoTimes (TwoA ⊗ x)) = CoproductA x
-  bwd1 (TwoTimes (TwoB ⊗ y)) = CoproductB y
+    bwd (TwoA ⊗ x) = CoproductA x
+    bwd (TwoB ⊗ y) = CoproductB y
 
 -------------------------------------------------------------------------------
 -- Prove that `Maybe` is isomorphic to `Const One ⊞ Identity`.
@@ -31,12 +35,16 @@ instance i1 :: Isomorphism1 (a ⊕ a) (TwoTimes a) where
 
 data Maybe a = Nothing | Just a
 
-instance i2 :: Isomorphism2 Maybe (Const One ⊞ Identity) where
-  fwd2 Nothing  = CoproductFA (Const One)
-  fwd2 (Just x) = CoproductFB (Identity x)
+i2 :: Maybe ≊ Const One ⊞ Identity
+i2 = Iso2 fwd bwd
+  where
+    fwd :: ∀ a. Maybe a → (Const One ⊞ Identity) a
+    fwd Nothing  = CoproductFA (Const One)
+    fwd (Just x) = CoproductFB (Identity x)
 
-  bwd2 (CoproductFA (Const One)) = Nothing
-  bwd2 (CoproductFB (Identity x)) = Just x
+    bwd :: ∀ a. (Const One ⊞ Identity) a → Maybe a
+    bwd (CoproductFA (Const One)) = Nothing
+    bwd (CoproductFB (Identity x)) = Just x
 
 -------------------------------------------------------------------------------
 -- Prove that `NonEmpty f` is isomorphic to `Identity ⊠ f`.
@@ -49,9 +57,14 @@ infixr 5 NonEmpty as :|
 instance functorNonEmpty :: Functor f ⇒ Functor (NonEmpty f) where
   map f (x :| xs) = f x :| map f xs
 
-instance i3 :: Functor f ⇒ Isomorphism2 (NonEmpty f) (Identity ⊠ f) where
-  fwd2 (x :| xs) = Identity x ⊠ xs
-  bwd2 (Identity x ⊠ xs) = x :| xs
+i3 :: ∀ f. Functor f ⇒ NonEmpty f ≊ Identity ⊠ f
+i3 = Iso2 fwd bwd
+  where
+    fwd :: ∀ a. NonEmpty f a → (Identity ⊠ f) a
+    fwd (x :| xs) = Identity x ⊠ xs
+
+    bwd :: ∀ a. (Identity ⊠ f) a → NonEmpty f a
+    bwd (Identity x ⊠ xs) = x :| xs
 
 -------------------------------------------------------------------------------
 -- Prove that `Ann a f` is isomorphic to `Const a ⊠ f`.
@@ -62,9 +75,14 @@ data Ann a f b = Ann a (f b)
 instance functorAnn :: Functor f ⇒ Functor (Ann a f) where
   map f (Ann a fb) = Ann a (map f fb)
 
-instance i4 :: Functor f ⇒ Isomorphism2 (Ann a f) (Const a ⊠ f) where
-  fwd2 (Ann a fb) = Const a ⊠ fb
-  bwd2 (Const a ⊠ fb) = (Ann a fb)
+i4 :: ∀ a f. Functor f ⇒ Ann a f ≊ Const a ⊠ f
+i4 = Iso2 fwd bwd
+  where
+    fwd :: ∀ b. Ann a f b → (Const a ⊠ f) b
+    fwd (Ann a fb) = Const a ⊠ fb
+
+    bwd :: ∀ b. (Const a ⊠ f) b → Ann a f b
+    bwd (Const a ⊠ fb) = (Ann a fb)
 
 -------------------------------------------------------------------------------
 -- Prove that `Const One ⊞ f` is isomorphic to `Maybe ⊚ f`.
@@ -72,12 +90,16 @@ instance i4 :: Functor f ⇒ Isomorphism2 (Ann a f) (Const a ⊠ f) where
 
 data AddOne f a = AddOne ((Const One ⊞ f) a)
 
-instance i5 :: Functor f ⇒ Isomorphism2 (AddOne f) (Maybe ⊚ f) where
-  fwd2 (AddOne (CoproductFA (Const One))) = Compose Nothing
-  fwd2 (AddOne (CoproductFB f))           = Compose (Just f)
+i5 :: ∀ f. Functor f ⇒ AddOne f ≊ Maybe ⊚ f
+i5 = Iso2 fwd bwd
+  where
+    fwd :: ∀ a. AddOne f a → (Maybe ⊚ f) a
+    fwd (AddOne (CoproductFA (Const One))) = Compose Nothing
+    fwd (AddOne (CoproductFB f))           = Compose (Just f)
 
-  bwd2 (Compose Nothing)  = AddOne $ CoproductFA (Const One)
-  bwd2 (Compose (Just f)) = AddOne $ CoproductFB f
+    bwd :: ∀ a. (Maybe ⊚ f) a → AddOne f a
+    bwd (Compose Nothing)  = AddOne $ CoproductFA (Const One)
+    bwd (Compose (Just f)) = AddOne $ CoproductFB f
 
 -------------------------------------------------------------------------------
 -- Natural numbers.
@@ -133,12 +155,16 @@ length (_ : xs) = Const $ runConst (length xs) + one
 -- Prove that `List` is isomorphic to `Const One ⊞ (Identity ⊠ List)`.
 -------------------------------------------------------------------------------
 
-instance i6 :: Isomorphism2 List (Const One ⊞ (Identity ⊠ List)) where
-  fwd2 Nil         = CoproductFA (Const One)
-  fwd2 (Cons x xs) = CoproductFB (Identity x ⊠ xs)
+i6 :: List ≊ Const One ⊞ (Identity ⊠ List)
+i6 = Iso2 fwd bwd
+  where
+    fwd :: ∀ a. List a → (Const One ⊞ (Identity ⊠ List)) a
+    fwd Nil         = CoproductFA (Const One)
+    fwd (Cons x xs) = CoproductFB (Identity x ⊠ xs)
 
-  bwd2 (CoproductFA (Const One))       = Nil
-  bwd2 (CoproductFB (Identity x ⊠ xs)) = x : xs
+    bwd :: ∀ a. (Const One ⊞ (Identity ⊠ List)) a → List a
+    bwd (CoproductFA (Const One))       = Nil
+    bwd (CoproductFB (Identity x ⊠ xs)) = x : xs
 
 -------------------------------------------------------------------------------
 -- Prove that `These a b` is isomorphic to `a ⊕ b ⊕ (a ⊗ b)`
@@ -146,14 +172,16 @@ instance i6 :: Isomorphism2 List (Const One ⊞ (Identity ⊠ List)) where
 
 data These a b = This a | That b | Both a b
 
-instance i7 :: Isomorphism1 (These a b) (a ⊕ b ⊕ (a ⊗ b)) where
-  fwd1 (This x)   = CoproductA x
-  fwd1 (That y)   = CoproductB (CoproductA y)
-  fwd1 (Both x y) = CoproductB (CoproductB (x ⊗ y))
+i7 :: ∀ a b. These a b ≅ a ⊕ b ⊕ (a ⊗ b)
+i7 = Iso fwd bwd
+  where
+    fwd (This x)   = CoproductA x
+    fwd (That y)   = CoproductB (CoproductA y)
+    fwd (Both x y) = CoproductB (CoproductB (x ⊗ y))
 
-  bwd1 (CoproductA x)                    = This x
-  bwd1 (CoproductB (CoproductA y))       = That y
-  bwd1 (CoproductB (CoproductB (x ⊗ y))) = Both x y
+    bwd (CoproductA x)                    = This x
+    bwd (CoproductB (CoproductA y))       = That y
+    bwd (CoproductB (CoproductB (x ⊗ y))) = Both x y
 
 -------------------------------------------------------------------------------
 -- Dummy main function
