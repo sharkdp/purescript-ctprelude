@@ -98,8 +98,8 @@ i5 = Iso2 fwd bwd
     fwd (AddOne (CoproductFB f))           = Compose (Just f)
 
     bwd :: ∀ a. (Maybe ⊚ f) a → AddOne f a
-    bwd (Compose Nothing)  = AddOne $ CoproductFA (Const One)
-    bwd (Compose (Just f)) = AddOne $ CoproductFB f
+    bwd (Compose Nothing)  = AddOne (CoproductFA (Const One))
+    bwd (Compose (Just f)) = AddOne (CoproductFB f)
 
 -------------------------------------------------------------------------------
 -- Natural numbers.
@@ -149,7 +149,7 @@ instance functorList :: Functor List where
 -- `Const Nat`.
 length :: List ↝ Const Nat
 length Nil      = Const Zero
-length (_ : xs) = Const $ runConst (length xs) + one
+length (_ : xs) = Const (runConst (length xs) + one)
 
 -------------------------------------------------------------------------------
 -- Prove that `List` is isomorphic to `Const One ⊞ (Identity ⊠ List)`.
