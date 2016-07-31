@@ -1,6 +1,6 @@
 #!/bin/python
 #
-# Generate the README.md file from
+# A hacky script to generate the README.md from the PureScript source.
 
 import re
 
