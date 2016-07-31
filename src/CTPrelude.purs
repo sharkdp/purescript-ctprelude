@@ -168,15 +168,15 @@ data Iso a b = Iso (a → b) (b → a)
 
 infix 1 type Iso as ≅
 
--- Get a function from `a → b` from the isomorphism `a ≅ b`.
+-- | Get a function from `a → b` from the isomorphism `a ≅ b`.
 forwards :: ∀ a b. a ≅ b → a → b
 forwards (Iso fwd _) = fwd
 
--- Get a function from `b → a` from the isomorphism `a ≅ b`.
+-- | Get a function from `b → a` from the isomorphism `a ≅ b`.
 backwards :: ∀ a b. a ≅ b → b → a
 backwards (Iso _ bwd) = bwd
 
--- Reverse an isomorphism.
+-- | Reverse an isomorphism.
 reverse :: ∀ a b. a ≅ b → b ≅ a
 reverse (Iso fwd bwd) = Iso bwd fwd
 
@@ -189,15 +189,15 @@ data Iso2 f g = Iso2 (f ↝ g) (g ↝ f)
 
 infix 1 type Iso2 as ≊
 
--- Get a natural transformation from `f ↝ g` from the isomorphism `f ≊ g`.
+-- | Get a natural transformation from `f ↝ g` from the isomorphism `f ≊ g`.
 forwards2 :: ∀ f g. f ≊ g → f ↝ g
 forwards2 (Iso2 fwd _) = fwd
 
--- Get a function from `b → a` from the isomorphism `a ≅ b`.
+-- | Get a function from `b → a` from the isomorphism `a ≅ b`.
 backwards2 :: ∀ f g. f ≊ g → g ↝ f
 backwards2 (Iso2 _ bwd) = bwd
 
--- Reverse an isomorphism.
+-- | Reverse an isomorphism.
 reverse2 :: ∀ f g. f ≊ g → g ≊ f
 reverse2 (Iso2 fwd bwd) = Iso2 bwd fwd
 
