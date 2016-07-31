@@ -142,7 +142,7 @@ infixr 6 Product as ⊗
 
 ```
 The coproduct (sum) of two types, typically known as `Either`. This
-corresponds to the category coproduct of two objects.
+corresponds to the categorical coproduct of two objects.
 ``` purescript
 data Coproduct a b = CoproductA a | CoproductB b
 
