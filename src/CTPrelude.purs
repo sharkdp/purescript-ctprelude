@@ -77,12 +77,12 @@ data Three = ThreeA | ThreeB | ThreeC
 -------------------------------------------------------------------------------
 
 -- | The identity morphism (or function).
-id :: ∀ a. a → a
+id ∷ ∀ a. a → a
 id x = x
 
 -- | Morphism composition is given by function composition. Note that function
 -- | composition is associative and that `id` is the neutral element of `∘`.
-compose :: ∀ a b c. (b → c) → (a → b) → (a → c)
+compose ∷ ∀ a b c. (b → c) → (a → b) → (a → c)
 compose f g x = f (g x)
 
 infixr 10 compose as ∘
@@ -100,7 +100,7 @@ type Initial = Zero
 -- | correspondence), this corresponds to "from falsehood, anything" or "ex
 -- | falso quodlibet".
 foreign import
-  fromInitial :: ∀ a. Initial → a
+  fromInitial ∷ ∀ a. Initial → a
 -- Note that `fromInitial` can never be called, because the type `Initial` has
 -- no inhabitant. The function can not be implemented in PureScript, therefore
 -- the foreign import.
@@ -111,7 +111,7 @@ type Final = One
 
 -- | `toFinal` (also known as `unit`) is the unique morphism from any object
 -- | (type) to the final object.
-toFinal :: ∀ a. a → Final
+toFinal ∷ ∀ a. a → Final
 toFinal _ = One
 
 -------------------------------------------------------------------------------
@@ -143,7 +143,7 @@ infixr 5 type Coproduct as ⊕
 -- | - Identity: `map id = id`
 -- | - Composition: `map (f ∘ g) = map f ∘ map g`
 class Functor f where
-  map :: ∀ a b. (a → b) → (f a → f b)
+  map ∷ ∀ a b. (a → b) → (f a → f b)
 
 infixl 4 map as <$>
 
@@ -157,7 +157,7 @@ infixl 4 map as <$>
 -- | - Identity: `cmap id = id`
 -- | - Composition: `cmap (f ∘ g) = cmap g ∘ cmap f`
 class Contravariant f where
-  cmap :: ∀ a b. (a → b) → (f b → f a)
+  cmap ∷ ∀ a b. (a → b) → (f b → f a)
 
 infixl 4 cmap as >$<
 
@@ -168,16 +168,16 @@ infixl 4 cmap as >$<
 -- | A newtype for morphisms on **Purs** (functions).
 newtype Morphism a b = Morphism (a → b)
 
-instance functorFunction :: Functor ((→) a) where
+instance functorFunction ∷ Functor ((→) a) where
   map = (∘)
 
-instance functorMorphism :: Functor (Morphism a) where
+instance functorMorphism ∷ Functor (Morphism a) where
   map g (Morphism f) = Morphism (g ∘ f)
 
 -- | A newtype for morphisms with the type arguments reversed
 newtype Reversed b a = Reversed (a → b)
 
-instance contravariantReversed :: Contravariant (Reversed b) where
+instance contravariantReversed ∷ Contravariant (Reversed b) where
   cmap g (Reversed f) = Reversed (f ∘ g)
 
 -------------------------------------------------------------------------------
@@ -194,7 +194,7 @@ infixr 6 type NaturalTransformation as ↝
 -------------------------------------------------------------------------------
 
 -- | An isomorphism between two types `a` and `b` is established by two
--- | functions, `forwards :: a → b` and `backwards :: b → a`, satisfying
+-- | functions, `forwards ∷ a → b` and `backwards ∷ b → a`, satisfying
 -- | the following laws:
 -- | - `forwards ∘ backwards = id`
 -- | - `backwards ∘ forwards = id`
@@ -204,23 +204,23 @@ infix 1 type Iso as ≅
 
 -- | ### forwards
 -- | Get a function `a → b` from the isomorphism `a ≅ b`.
-forwards :: ∀ a b. a ≅ b → a → b
+forwards ∷ ∀ a b. a ≅ b → a → b
 forwards (Iso fwd _) = fwd
 
 -- | ### backwards
 -- | Get a function `b → a` from the isomorphism `a ≅ b`.
-backwards :: ∀ a b. a ≅ b → b → a
+backwards ∷ ∀ a b. a ≅ b → b → a
 backwards (Iso _ bwd) = bwd
 
 -- | ### reverse
 -- | Reverse an isomorphism.
-reverse :: ∀ a b. a ≅ b → b ≅ a
+reverse ∷ ∀ a b. a ≅ b → b ≅ a
 reverse (Iso fwd bwd) = Iso bwd fwd
 
 -- | ### Isomorphisms between higher-kinded types
 -- | An isomorphism between two types `f` and `g` of kind `* → *` is given by
--- | two natural transformations, `forwards2 :: f ↝ g` and
--- | `backwards2 :: g ↝ f`, satisfying the following laws:
+-- | two natural transformations, `forwards2 ∷ f ↝ g` and
+-- | `backwards2 ∷ g ↝ f`, satisfying the following laws:
 -- | - `forwards2 ∘ backwards2 = id`
 -- | - `backwards2 ∘ forwards2 = id`
 data Iso2 f g = Iso2 (f ↝ g) (g ↝ f)
@@ -229,17 +229,17 @@ infix 1 type Iso2 as ≊
 
 -- | ### forwards2
 -- | Get a natural transformation `f ↝ g` from the isomorphism `f ≊ g`.
-forwards2 :: ∀ f g. f ≊ g → f ↝ g
+forwards2 ∷ ∀ f g. f ≊ g → f ↝ g
 forwards2 (Iso2 fwd _) = fwd
 
 -- | ### backwards2
 -- | Get a natural transformation `g ↝ f` from the isomorphism `f ≊ g`.
-backwards2 :: ∀ f g. f ≊ g → g ↝ f
+backwards2 ∷ ∀ f g. f ≊ g → g ↝ f
 backwards2 (Iso2 _ bwd) = bwd
 
 -- | ### reverse2
 -- | Reverse an isomorphism.
-reverse2 :: ∀ f g. f ≊ g → g ≊ f
+reverse2 ∷ ∀ f g. f ≊ g → g ≊ f
 reverse2 (Iso2 fwd bwd) = Iso2 bwd fwd
 
 -------------------------------------------------------------------------------
@@ -252,7 +252,7 @@ data ProductF f g a = ProductF (f a) (g a)
 infixl 4 type ProductF as ⊠
 infixl 4 ProductF as ⊠
 
-instance functorProductF :: (Functor f, Functor g) ⇒ Functor (ProductF f g) where
+instance functorProductF ∷ (Functor f, Functor g) ⇒ Functor (ProductF f g) where
   map f (fa ⊠ ga) = (f <$> fa) ⊠ (f <$> ga)
 
 -- | The coproduct of two functors.
@@ -260,7 +260,7 @@ data CoproductF f g a = CoproductFA (f a) | CoproductFB (g a)
 
 infixl 3 type CoproductF as ⊞
 
-instance functorFCoproduct :: (Functor f, Functor g) ⇒ Functor (CoproductF f g) where
+instance functorFCoproduct ∷ (Functor f, Functor g) ⇒ Functor (CoproductF f g) where
   map f (CoproductFA fa) = CoproductFA (f <$> fa)
   map f (CoproductFB fb) = CoproductFB (f <$> fb)
 
@@ -274,7 +274,7 @@ newtype Compose f g a = Compose (f (g a))
 
 infixl 3 type Compose as ⊚
 
-instance functorCompose :: (Functor f, Functor g) ⇒ Functor (Compose f g) where
+instance functorCompose ∷ (Functor f, Functor g) ⇒ Functor (Compose f g) where
   map h (Compose fga) = Compose (map (map h) fga)
 
 -------------------------------------------------------------------------------
@@ -289,12 +289,12 @@ instance functorCompose :: (Functor f, Functor g) ⇒ Functor (Compose f g) wher
 -- | - Identity: `bimap id id = id`
 -- | - Composition: `bimap f1 g1 ∘ bimap f2 g2 = bimap (f1 ∘ f2) (g1 ∘ g2)`
 class Bifunctor f where
-  bimap :: ∀ a b c d. (a → c) → (b → d) → f a b → f c d
+  bimap ∷ ∀ a b c d. (a → c) → (b → d) → f a b → f c d
 
-instance bifunctorProduct :: Bifunctor Product where
+instance bifunctorProduct ∷ Bifunctor Product where
   bimap f g (x ⊗ y) = f x ⊗ g y
 
-instance bifunctorSum :: Bifunctor Coproduct where
+instance bifunctorSum ∷ Bifunctor Coproduct where
   bimap f _ (CoproductA x) = CoproductA (f x)
   bimap _ g (CoproductB y) = CoproductB (g y)
 
@@ -312,39 +312,39 @@ instance bifunctorSum :: Bifunctor Coproduct where
 -- | - Identity: `dimap id id = id`
 -- | - Composition: `dimap f1 g1 ∘ dimap f2 g2 = dimap (f2 ∘ f1) (g1 ∘ g2)`
 class Profunctor p where
-  dimap :: ∀ a b c d. (c → a) → (b → d) → p a b → p c d
+  dimap ∷ ∀ a b c d. (c → a) → (b → d) → p a b → p c d
 
-instance profunctorFunction :: Profunctor (→) where
+instance profunctorFunction ∷ Profunctor (→) where
   dimap f h g = h ∘ g ∘ f
 
 -- | ### Star
 -- | `Star` lifts functors to profunctors (forwards).
 newtype Star f a b = Star (a → f b)
 
-runStar :: ∀ f a b. Star f a b → (a → f b)
+runStar ∷ ∀ f a b. Star f a b → (a → f b)
 runStar (Star fn) = fn
 
-instance profunctorStar :: Functor f ⇒ Profunctor (Star f) where
+instance profunctorStar ∷ Functor f ⇒ Profunctor (Star f) where
   dimap f g (Star fn) = Star (map g ∘ fn ∘ f)
 
 -- | ### Costar
 -- | `Costar` lifts functors to profunctors (backwards).
 newtype Costar f a b = Costar (f a → b)
 
-runCostar :: ∀ f a b. Costar f a b → (f a → b)
+runCostar ∷ ∀ f a b. Costar f a b → (f a → b)
 runCostar (Costar fn) = fn
 
-instance profunctorCostar :: Functor f ⇒ Profunctor (Costar f) where
+instance profunctorCostar ∷ Functor f ⇒ Profunctor (Costar f) where
   dimap f g (Costar fn) = Costar (g ∘ fn ∘ map f)
 
 -- | ### Strong
 -- | The `Strong` class extends `Profunctor` with combinators for working with
 -- | products.
 class Profunctor p ⇐ Strong p where
-  first  :: ∀ a b c. p a b → p (a ⊗ c) (b ⊗ c)
-  second :: ∀ a b c. p b c → p (a ⊗ b) (a ⊗ c)
+  first  ∷ ∀ a b c. p a b → p (a ⊗ c) (b ⊗ c)
+  second ∷ ∀ a b c. p b c → p (a ⊗ b) (a ⊗ c)
 
-instance strongFunction :: Strong (→) where
+instance strongFunction ∷ Strong (→) where
   first  fn (a ⊗ c) = fn a ⊗ c
   second fn (a ⊗ c) = a ⊗ fn c
 
@@ -352,10 +352,10 @@ instance strongFunction :: Strong (→) where
 -- | The `Choice` class extends `Profunctor` with combinators for working with
 -- | coproducts.
 class Profunctor p ⇐ Choice p where
-  left  :: ∀ a b c. p a b → p (a ⊕ c) (b ⊕ c)
-  right :: ∀ a b c. p b c → p (a ⊕ b) (a ⊕ c)
+  left  ∷ ∀ a b c. p a b → p (a ⊕ c) (b ⊕ c)
+  right ∷ ∀ a b c. p b c → p (a ⊕ b) (a ⊕ c)
 
-instance choiceFunction :: Choice (→) where
+instance choiceFunction ∷ Choice (→) where
   left  fn (CoproductA x) = CoproductA (fn x)
   left  fn (CoproductB x) = CoproductB x
   right fn (CoproductA x) = CoproductA x
@@ -365,9 +365,9 @@ instance choiceFunction :: Choice (→) where
 -- | The `Closed` class extends `Profunctor` with a combinator to work with
 -- | functions.
 class Profunctor p ⇐ Closed p where
-  closed :: ∀ a b x. p a b → p (x → a) (x → b)
+  closed ∷ ∀ a b x. p a b → p (x → a) (x → b)
 
-instance closedFunction :: Closed Function where
+instance closedFunction ∷ Closed Function where
   closed = (∘)
 
 -------------------------------------------------------------------------------
@@ -378,28 +378,28 @@ instance closedFunction :: Closed Function where
 -- | The Identity functor.
 data Identity a = Identity a
 
-instance functorIdentity :: Functor Identity where
+instance functorIdentity ∷ Functor Identity where
   map f (Identity x) = Identity (f x)
 
 -- | ### runIdentity
 -- | Extract the value from the `Identity` functor.
-runIdentity :: ∀ a. Identity a → a
+runIdentity ∷ ∀ a. Identity a → a
 runIdentity (Identity x) = x
 
 -- | ### Const
 -- | The Constant functor.
 data Const a b = Const a
 
-instance functorConst :: Functor (Const a) where
+instance functorConst ∷ Functor (Const a) where
   map _ (Const x) = Const x
 
-instance contravariantConst :: Contravariant (Const a) where
+instance contravariantConst ∷ Contravariant (Const a) where
   cmap _ (Const x) = Const x
 
-instance bifunctorConst :: Bifunctor Const where
+instance bifunctorConst ∷ Bifunctor Const where
   bimap f _ (Const x) = Const (f x)
 
 -- | ### runConst
 -- | Extract the value from a `Const` functor.
-runConst :: ∀ a b. Const a b → a
+runConst ∷ ∀ a b. Const a b → a
 runConst (Const x) = x
