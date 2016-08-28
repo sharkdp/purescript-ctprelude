@@ -7,13 +7,13 @@ for the types and functions that are typically defined in a Prelude or one
 of the basic libraries. For example, `Tuple` is called `Product` (with
 infix alias ⊗) and `Either` is called `Coproduct` (with infix alias ⊕).
 `Unit`, a type with a single inhabitant, is called `One` whereas
-`Bool` is called `Two`. The following table shows a few well-known
+`Boolean` is called `Two`. The following table shows a few well-known
 PureScript types, and their (isomorphic) CTPrelude equivalent:
 
 ``` purs
          Void  ≅  Zero
          Unit  ≅  One
-         Bool  ≅  Two
+      Boolean  ≅  Two
      Ordering  ≅  Three
 
    Either a b  ≅  a ⊕ b
@@ -69,7 +69,7 @@ data One = One
 ```
 ### Two
 A type with two inhabitants (a set with two elements). Typically known as
-`Bool`. `Two` is isomorphic to `One ⊕ One`, i.e. `Two ≅ One ⊕ One`.
+`Boolean`. `Two` is isomorphic to `One ⊕ One`, i.e. `Two ≅ One ⊕ One`.
 ``` purescript
 data Two = TwoA | TwoB
 
@@ -206,7 +206,7 @@ A natural transformation is a mapping between two functors.
 ``` purescript
 type NaturalTransformation f g = ∀ a. f a → g a
 
-infixr 6 type NaturalTransformation as ↝
+infixr 4 type NaturalTransformation as ↝
 
 ```
 ## Isomorphisms
@@ -307,7 +307,7 @@ always a functor.
 ``` purescript
 newtype Compose f g a = Compose (f (g a))
 
-infixl 3 type Compose as ⊚
+infixl 5 type Compose as ⊚
 
 instance functorCompose ∷ (Functor f, Functor g) ⇒ Functor (Compose f g) where
   map h (Compose fga) = Compose (map (map h) fga)
@@ -454,4 +454,27 @@ Extract the value from a `Const` functor.
 ``` purescript
 runConst ∷ ∀ a b. Const a b → a
 runConst (Const x) = x
+
+```
+## Monad
+
+A monad is an endofunctor on **Purs**, equipped with two natural
+transformations `pure` (often *η*) and `join` (often *µ*).
+
+Laws:
+- Right identity: `pure ↣ f = f`
+- Left identity:  `f ↣ pure = f`
+- Associativity:  `(f ↣ g) ↣ h = f ↣ (g ↣ h)`
+``` purescript
+class Functor m ⇐ Monad m where
+  pure ∷ Identity ↝ m
+  join ∷ m ⊚ m ↝ m
+
+```
+Compose two functions with monadic return values.
+``` purescript
+composeKleisli ∷ ∀ m a b c. Monad m ⇒ (a → m b) → (b → m c) → a → m c
+composeKleisli f g a = join (Compose (g <$> f a))
+
+infixr 1 composeKleisli as ↣
 ```
