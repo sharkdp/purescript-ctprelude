@@ -194,7 +194,7 @@ infixr 4 type NaturalTransformation as ↝
 -------------------------------------------------------------------------------
 
 -- | An isomorphism between two types `a` and `b` is established by two
--- | functions, `forwards ∷ a → b` and `backwards ∷ b → a`, satisfying
+-- | morphisms, `forwards ∷ a → b` and `backwards ∷ b → a`, satisfying
 -- | the following laws:
 -- | - `forwards ∘ backwards = id`
 -- | - `backwards ∘ forwards = id`
@@ -217,30 +217,30 @@ backwards (Iso _ bwd) = bwd
 reverse ∷ ∀ a b. a ≅ b → b ≅ a
 reverse (Iso fwd bwd) = Iso bwd fwd
 
--- | ### Isomorphisms between higher-kinded types
--- | An isomorphism between two types `f` and `g` of kind `* → *` is given by
--- | two natural transformations, `forwards2 ∷ f ↝ g` and
--- | `backwards2 ∷ g ↝ f`, satisfying the following laws:
--- | - `forwards2 ∘ backwards2 = id`
--- | - `backwards2 ∘ forwards2 = id`
-data Iso2 f g = Iso2 (f ↝ g) (g ↝ f)
+-- | ### Natural isomorphisms
+-- | A natural isomorphism between two types `f` and `g` of kind `* → *`
+-- | is given by two natural transformations, `forwardsN ∷ f ↝ g` and
+-- | `backwardsN ∷ g ↝ f`, satisfying the following laws:
+-- | - `forwardsN ∘ backwardsN = id`
+-- | - `backwardsN ∘ forwardsN = id`
+data NaturalIso f g = NaturalIso (f ↝ g) (g ↝ f)
 
-infix 1 type Iso2 as ≊
+infix 1 type NaturalIso as ≊
 
--- | ### forwards2
--- | Get a natural transformation `f ↝ g` from the isomorphism `f ≊ g`.
-forwards2 ∷ ∀ f g. f ≊ g → f ↝ g
-forwards2 (Iso2 fwd _) = fwd
+-- | ### forwardsN
+-- | Get the natural transformation `f ↝ g` from the isomorphism `f ≊ g`.
+forwardsN ∷ ∀ f g. f ≊ g → f ↝ g
+forwardsN (NaturalIso fwd _) = fwd
 
--- | ### backwards2
--- | Get a natural transformation `g ↝ f` from the isomorphism `f ≊ g`.
-backwards2 ∷ ∀ f g. f ≊ g → g ↝ f
-backwards2 (Iso2 _ bwd) = bwd
+-- | ### backwardsN
+-- | Get the natural transformation `g ↝ f` from the isomorphism `f ≊ g`.
+backwardsN ∷ ∀ f g. f ≊ g → g ↝ f
+backwardsN (NaturalIso _ bwd) = bwd
 
--- | ### reverse2
+-- | ### reverseN
 -- | Reverse an isomorphism.
-reverse2 ∷ ∀ f g. f ≊ g → g ≊ f
-reverse2 (Iso2 fwd bwd) = Iso2 bwd fwd
+reverseN ∷ ∀ f g. f ≊ g → g ≊ f
+reverseN (NaturalIso fwd bwd) = NaturalIso bwd fwd
 
 -------------------------------------------------------------------------------
 -- | ## Products and coproducts of functors

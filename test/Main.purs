@@ -36,7 +36,7 @@ i1 = Iso fwd bwd
 data Maybe a = Nothing | Just a
 
 i2 ∷ Maybe ≊ Const One ⊞ Identity
-i2 = Iso2 fwd bwd
+i2 = NaturalIso fwd bwd
   where
     fwd ∷ ∀ a. Maybe a → (Const One ⊞ Identity) a
     fwd Nothing  = CoproductFA (Const One)
@@ -58,7 +58,7 @@ instance functorNonEmpty ∷ Functor f ⇒ Functor (NonEmpty f) where
   map f (x :| xs) = f x :| map f xs
 
 i3 ∷ ∀ f. Functor f ⇒ NonEmpty f ≊ Identity ⊠ f
-i3 = Iso2 fwd bwd
+i3 = NaturalIso fwd bwd
   where
     fwd ∷ ∀ a. NonEmpty f a → (Identity ⊠ f) a
     fwd (x :| xs) = Identity x ⊠ xs
@@ -76,7 +76,7 @@ instance functorAnn ∷ Functor f ⇒ Functor (Ann a f) where
   map f (Ann a fb) = Ann a (map f fb)
 
 i4 ∷ ∀ a f. Functor f ⇒ Ann a f ≊ Const a ⊠ f
-i4 = Iso2 fwd bwd
+i4 = NaturalIso fwd bwd
   where
     fwd ∷ ∀ b. Ann a f b → (Const a ⊠ f) b
     fwd (Ann a fb) = Const a ⊠ fb
@@ -91,7 +91,7 @@ i4 = Iso2 fwd bwd
 data AddOne f a = AddOne ((Const One ⊞ f) a)
 
 i5 ∷ ∀ f. Functor f ⇒ AddOne f ≊ Maybe ⊚ f
-i5 = Iso2 fwd bwd
+i5 = NaturalIso fwd bwd
   where
     fwd ∷ ∀ a. AddOne f a → (Maybe ⊚ f) a
     fwd (AddOne (CoproductFA (Const One))) = Compose Nothing
@@ -156,7 +156,7 @@ length (_ : xs) = Const (runConst (length xs) + one)
 -------------------------------------------------------------------------------
 
 i6 ∷ List ≊ Const One ⊞ (Identity ⊠ List)
-i6 = Iso2 fwd bwd
+i6 = NaturalIso fwd bwd
   where
     fwd ∷ ∀ a. List a → (Const One ⊞ (Identity ⊠ List)) a
     fwd Nil         = CoproductFA (Const One)
