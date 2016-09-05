@@ -55,14 +55,14 @@ module CTPrelude where
 
 ### Zero
 A type with no inhabitant (the empty set). `Zero` is the *initial element*
-in **Purs**. This type is also known as `Void`.
+in **Purs** (see below). This type is also known as `Void`.
 ``` purescript
 data Zero
 
 ```
 ### One
-A type with a single inhabitant (a singleton set). `One` is the *final
-object* in **Purs**. This type is also known as `Unit`.
+A type with a single inhabitant (a singleton set). `One` is the *terminal
+object* in **Purs** (see below). This type is also known as `Unit`.
 ``` purescript
 data One = One
 
@@ -97,7 +97,7 @@ compose f g x = f (g x)
 infixr 10 compose as ∘
 
 ```
-## Initial and final object
+## Initial and terminal object
 
 ### Initial
 In the category of PureScript types, `Zero` is the *initial object*.
@@ -117,17 +117,18 @@ foreign import
 -- the foreign import.
 
 ```
-### Final
-In the category of PureScript types, `One` is the *final object*.
+### Terminal
+In the category of PureScript types, `One` is the *terminal object*
+(sometimes also called final object).
 ``` purescript
-type Final = One
+type Terminal = One
 
 ```
-`toFinal` (also known as `unit`) is the unique morphism from any object
-(type) to the final object.
+`toTerminal` (also known as `unit`) is the unique morphism from any object
+(type) to the terminal object.
 ``` purescript
-toFinal ∷ ∀ a. a → Final
-toFinal _ = One
+toTerminal ∷ ∀ a. a → Terminal
+toTerminal _ = One
 
 ```
 ## Product and coproduct
